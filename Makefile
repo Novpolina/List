@@ -10,4 +10,4 @@ obj/list.o: list.cpp
 	g++ -c list.cpp $(cxx_flags)
 
 clean:
-	rm *.o *.exe
+	del *.o *.exe
