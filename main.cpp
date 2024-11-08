@@ -17,5 +17,7 @@ int main(){
     elem = DeleteElem(2, &list);
     PushAfter(3, 27, &list);
     ListDump(list);
+    dump_to_dot(&list, 1);
+
 
 }

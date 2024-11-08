@@ -22,3 +22,4 @@ void PushAfter(int index, int elem, List* list);
 void PushBefore(int index, int elem, List* list);
 int DeleteElem(int index, List* list);
 void ListDump(List list);
+void dump_to_dot(List* list, int num_graph);

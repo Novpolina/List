@@ -1,5 +1,6 @@
 #include "list.h"
-#include "stdlib.h"
+#include <stdlib.h>
+#include <assert.h>
 
 int ERROR = -1;
 int ALL_OKAY = 0;
@@ -19,6 +20,66 @@ void FillPrev(List* list){
     for(int i = 1; i <= list->length; i++){
         list->node[i].prev = POIZON;
     }
+}
+
+void dump_to_dot(List* list, int num_graph)
+{
+    FILE* f_dot = fopen("list.dot", "w");
+
+    assert(f_dot);
+    assert(list);
+    if(ferror(f_dot))
+        fprintf(stderr, "FILE OPEN ERROR!!!\n");
+
+
+    fprintf(f_dot, "digraph LIST%d {\n\trankdir=LR;\n\tbgcolor = white;\n", num_graph);
+    
+    fprintf(f_dot, "\tsubgraph cluster0 {\n\t\tnode [style=filled,color=white];\n"
+                   "\t\tstyle=filled;\n\t\tcolor=lightgrey;\n");
+
+    for(int i = 0; i < list->length; i++)
+    {
+        if(list -> node[i].prev == POIZON)
+        {
+            fprintf(f_dot, "\t\tnode%zu [shape=record, color=white,"
+                           "label=\" index=%zu | data=POIZON | next=%d \" ];\n",
+                           i, i, list -> node[i].next);
+            int next = -(list -> node[i].next);
+
+            if(i != list->length - 1){
+                fprintf(f_dot, "\t\tnode%zu -> node%d;\n", i, next);
+            }
+
+        }
+
+    }
+       fprintf(f_dot, "\t\tlabel = \"Empty fields\";\n\t}\n");
+
+    fprintf(f_dot, "\tnode0 [shape=record, color=green,"
+                   "label=\" NULL LIST ELEMENT | index=0 | data=POIZON | next=%d | prev=%d \" ];\n",
+                   list -> node[0].next, list -> node[0].prev);
+
+    size_t i = 0;
+
+    while(list -> node[i].next != 0)
+    {
+        fprintf(f_dot, "\tnode%zu -> node%d;\n", i, list -> node[i].next);
+
+        i = list -> node[i].next;
+
+        fprintf(f_dot, "\tnode%zu [shape=record, color=blue,"
+                       "label=\" index=%zu | data=%d | next=%d | prev=%d \" ];\n",
+                       i, i, list -> node[i].data, list -> node[i].next, list -> node[i].prev);
+    }
+
+    fprintf(f_dot, "\tnode%zu -> node0;\n", i);
+
+    fprintf(f_dot, "\t\"free = %zu\";\n", list -> free);
+
+    fprintf(f_dot, "}\n\n");
+
+    fclose(f_dot);
+
 }
 
 void FillData(List* list){
